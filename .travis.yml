@@ -17,6 +17,22 @@ cache:
 
 script: "./gradlew clean build"
 
+before_deploy:
+  - zip -r springboot-webservice com.liam.webservice
+  - mkdir -p deploy
+  - mv springboot-webservice.zip deploy/springboot-webservice.zip
+
+deploy:
+  -provider: s3
+  access_key_id: $AWS_ACCESS_KEY #TRAVIS REPO SETTING 설정값
+  secret_access_key: $AWS_SECRET_KEY #상동
+  bucket: liam-webservice_build #s3버킷
+  region: ap-northeast-2
+  skip_cleanup: true
+  acl: private #zip파일 접근을 private로
+  local_dir: deploy
+  wait-untill-deploy: true
+
 #CI 실행 완료 시 메일로알람
 notifications:
   email:
