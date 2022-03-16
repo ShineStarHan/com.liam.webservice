@@ -23,7 +23,18 @@ before_deploy:
   - mv springboot-webservice.zip deploy/springboot-webservice.zip
 
 deploy:
-  -provider: s3
+  - provider: s3
+  access_key_id: $AWS_ACCESS_KEY #TRAVIS REPO SETTING 설정값
+  secret_access_key: $AWS_SECRET_KEY #상동
+  bucket: liam-webservice-build #s3버킷
+  key: liam-webservice-build.zip
+  region: ap-northeast-2
+  skip_cleanup: true
+  acl: private #zip파일 접근을 private로
+  local_dir: deploy
+  wait-untill-deploy: true
+
+  - provider: codedeploy
   access_key_id: $AWS_ACCESS_KEY #TRAVIS REPO SETTING 설정값
   secret_access_key: $AWS_SECRET_KEY #상동
   bucket: liam-webservice-build #s3버킷
@@ -33,10 +44,7 @@ deploy:
   deployment_group: springboot-webservice-group
   region: ap-northeast-2
   skip_cleanup: true
-  acl: private #zip파일 접근을 private로
-  local_dir: deploy
   wait-untill-deploy: true
-
 #CI 실행 완료 시 메일로알람
 notifications:
   email:
